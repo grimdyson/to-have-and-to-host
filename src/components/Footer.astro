@@ -1,0 +1,73 @@
+---
+import { wedding } from "@/data/site";
+---
+
+<footer class="site-footer" data-site-footer>
+  <div class="footer-themes" role="group" aria-label="Display theme">
+    <button class="footer-control theme-option" type="button" data-theme-mode="system" aria-pressed="false">System</button>
+    <button class="footer-control theme-option" type="button" data-theme-mode="light" aria-pressed="false">Light</button>
+    <button class="footer-control theme-option" type="button" data-theme-mode="dark" aria-pressed="false">Dark</button>
+  </div>
+
+  <button class="footer-control back-to-top" type="button" data-back-to-top>Back to top</button>
+
+  <span class="design-credit">
+    <span>{wedding.footer.credit.prefix}</span>
+    <a
+      class="footer-control"
+      href={wedding.footer.credit.href}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {wedding.footer.credit.label}
+    </a>
+  </span>
+</footer>
+
+<script>
+  type Theme = "light" | "dark";
+  type ThemeMode = "system" | "light" | "dark";
+
+  const footer = document.querySelector<HTMLElement>("[data-site-footer]");
+  const themeButtons = footer?.querySelectorAll<HTMLButtonElement>("[data-theme-mode]") ?? [];
+  const backToTop = footer?.querySelector<HTMLButtonElement>("[data-back-to-top]");
+  const metaTheme = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+  const savedThemeMode = localStorage.getItem("theme-mode");
+  let themeMode: ThemeMode =
+    savedThemeMode === "light" || savedThemeMode === "dark" || savedThemeMode === "system"
+      ? savedThemeMode
+      : "system";
+
+  const applyTheme = (theme: Theme) => {
+    document.documentElement.dataset.theme = theme;
+    metaTheme?.setAttribute("content", theme === "dark" ? "#111111" : "#ffffff");
+  };
+
+  const setThemeMode = (mode: ThemeMode) => {
+    themeMode = mode;
+    localStorage.setItem("theme-mode", mode);
+    const theme = mode === "system" ? (systemTheme.matches ? "dark" : "light") : mode;
+    applyTheme(theme);
+    themeButtons.forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.themeMode === mode));
+    });
+  };
+
+  setThemeMode(themeMode);
+  systemTheme.addEventListener("change", (event) => {
+    if (themeMode === "system") applyTheme(event.matches ? "dark" : "light");
+  });
+
+  themeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const mode = button.dataset.themeMode as ThemeMode | undefined;
+      if (mode) setThemeMode(mode);
+    });
+  });
+
+  backToTop?.addEventListener("click", () => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+  });
+</script>

@@ -1,0 +1,364 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { wedding } from "@/data/site";
+---
+
+<BaseLayout>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-inner">
+      <p class="eyebrow">{wedding.hero.eyebrow}</p>
+      <h1 id="hero-title">
+        {wedding.couple.partnerOne}<span>and</span>{wedding.couple.partnerTwo}
+      </h1>
+      <p class="date-line">{wedding.date.display}</p>
+      <img
+        class:list={["hero-photo", { "image-colour": wedding.imagery.useColour }]}
+        src={wedding.hero.image.src}
+        alt={wedding.hero.image.alt}
+        width="1600"
+        height="850"
+        fetchpriority="high"
+      />
+      <p class="hero-copy">{wedding.hero.introduction}</p>
+      <div class="hero-actions">
+        <a class="button" href="#rsvp">RSVP</a>
+        <a class="text-link" href="#schedule">View schedule</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-anchor two-column" id="details" aria-labelledby="details-title">
+    <div>
+      <p class="eyebrow">{wedding.details.eyebrow}</p>
+      <h3 class="section-heading section-heading-compact" id="details-title">{wedding.details.title}</h3>
+    </div>
+    <div class="detail-list">
+      {
+        wedding.details.items.map((item) => (
+          <p><strong>{item.label}</strong><span>{item.value}</span></p>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section section-anchor section-with-intro" id="schedule" aria-labelledby="schedule-title">
+    <div class="section-intro">
+      <p class="eyebrow">{wedding.schedule.eyebrow}</p>
+      <h2 class="section-heading" id="schedule-title">{wedding.schedule.title}</h2>
+      <p>{wedding.schedule.introduction}</p>
+    </div>
+    <div class="timeline" aria-label="Wedding day schedule">
+      {
+        wedding.schedule.items.map((item) => (
+          <article class="timeline-item">
+            <p class="timeline-time">{item.time}</p>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section section-anchor section-with-intro" id="travel" aria-labelledby="travel-title">
+    <div class="section-intro">
+      <p class="eyebrow">{wedding.travel.eyebrow}</p>
+      <h2 class="section-heading" id="travel-title">{wedding.travel.title}</h2>
+      <p>{wedding.travel.introduction}</p>
+    </div>
+
+    <div class:list={["venue-card", { "image-colour": wedding.imagery.useColour }]}>
+      <img
+        class="venue-card-image"
+        src={wedding.venue.image.src}
+        alt={wedding.venue.image.alt}
+        width="1500"
+        height="1000"
+        loading="lazy"
+        decoding="async"
+      />
+      <div>
+        <p class="eyebrow">Ceremony and reception</p>
+        <h3>{wedding.venue.name}</h3>
+        <address>{wedding.venue.address}<br />{wedding.venue.city}</address>
+      </div>
+      <div class="travel-actions" aria-label="Open venue in maps">
+        <a class="button" href={wedding.venue.maps.google} target="_blank" rel="noopener noreferrer">
+          Google Maps
+        </a>
+        <a class="button" href={wedding.venue.maps.apple} target="_blank" rel="noopener noreferrer">
+          Apple Maps
+        </a>
+      </div>
+    </div>
+
+    <div class="info-stack travel-notes">
+      {
+        wedding.travel.notes.map((item) => (
+          <article>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section section-anchor section-with-intro" id="dress-code" aria-labelledby="dress-code-title">
+    <div class="section-intro">
+      <p class="eyebrow">{wedding.dressCode.eyebrow}</p>
+      <h2 class="section-heading" id="dress-code-title">{wedding.dressCode.title}</h2>
+    </div>
+
+    <div class="dress-code-feature">
+      <div>
+        <h3>{wedding.dressCode.name}</h3>
+        <p>{wedding.dressCode.description}</p>
+      </div>
+      <div class="info-stack dress-code-notes">
+        {
+          wedding.dressCode.notes.map((item) => (
+            <article>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </article>
+          ))
+        }
+      </div>
+      {
+        wedding.dressCode.inspirationLink.enabled && (
+          <a
+            class="button secondary-button inspiration-link"
+            href={wedding.dressCode.inspirationLink.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {wedding.dressCode.inspirationLink.label}
+          </a>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section section-anchor section-with-intro" id="rsvp" aria-labelledby="rsvp-title">
+    <div class="section-intro">
+      <p class="eyebrow">{wedding.rsvp.eyebrow}</p>
+      <h2 class="section-heading" id="rsvp-title">{wedding.rsvp.title}</h2>
+      <p>Please respond by {wedding.rsvp.deadline}.</p>
+    </div>
+
+    <div class="rsvp-panel">
+      <div class="rsvp-explanation">
+        <h3>How this RSVP works</h3>
+        <p>
+          Complete the form and choose <strong>Prepare RSVP email</strong>. Your email application will open with your response ready to send.
+        </p>
+        <p>
+          You must send that email to complete your RSVP; this website does not store or transmit your response.
+        </p>
+      </div>
+
+      <form
+        class="rsvp-form"
+        data-rsvp-form
+        data-recipient={wedding.rsvp.recipientEmail}
+        data-subject={wedding.rsvp.emailSubject}
+        novalidate
+      >
+        <div class="form-error-summary" data-form-errors role="alert" tabindex="-1" hidden></div>
+
+        <label>
+          Guest name
+          <input type="text" name="name" autocomplete="name" required />
+        </label>
+
+        {
+          wedding.rsvp.collectContactEmail && (
+            <label>
+              Contact email
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+          )
+        }
+
+        <fieldset class="radio-group">
+          <legend>Will you be joining us?</legend>
+          <label class="radio-option">
+            <input type="radio" name="attendance" value={wedding.rsvp.attendanceOptions.attending} required />
+            {wedding.rsvp.attendanceOptions.attending}
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="attendance" value={wedding.rsvp.attendanceOptions.notAttending} required />
+            {wedding.rsvp.attendanceOptions.notAttending}
+          </label>
+        </fieldset>
+
+        {
+          wedding.rsvp.collectPartySize && (
+            <label>
+              Number of guests in your party
+              <input type="number" name="party_size" min="1" max="20" inputmode="numeric" />
+            </label>
+          )
+        }
+
+        <label>
+          Names of other guests in your party
+          <input type="text" name="guest_names" autocomplete="off" />
+        </label>
+
+        <label>
+          Dietary requirements
+          <textarea name="dietary_requirements" rows="3" placeholder="Allergies, intolerances or meal notes"></textarea>
+        </label>
+
+        <label>
+          Optional message
+          <textarea name="message" rows="4" placeholder="A note for the couple"></textarea>
+        </label>
+
+        <div class="rsvp-actions">
+          <button class="button" type="submit">Prepare RSVP email</button>
+          <button class="button secondary-button" type="button" data-copy-rsvp disabled>Copy response</button>
+        </div>
+
+        <p class="rsvp-status" data-rsvp-status aria-live="polite"></p>
+        <label class="rsvp-copy-fallback" data-copy-fallback hidden>
+          Select and copy your RSVP response
+          <textarea rows="10" readonly data-copy-fallback-text></textarea>
+        </label>
+        <p class="rsvp-fallback">
+          If no email application opens, copy your response and email it to
+          <a href={`mailto:${wedding.rsvp.recipientEmail}`}>{wedding.rsvp.recipientEmail}</a>.
+        </p>
+      </form>
+    </div>
+  </section>
+
+  <section class="section section-anchor section-with-intro" id="faqs" aria-labelledby="faqs-title">
+    <div class="section-intro">
+      <p class="eyebrow">{wedding.faqs.eyebrow}</p>
+      <h2 class="section-heading" id="faqs-title">{wedding.faqs.title}</h2>
+      <p>{wedding.faqs.introduction}</p>
+    </div>
+
+    <div class="faq-list">
+      {
+        wedding.faqs.items.map((item) => (
+          <details>
+            <summary>{item.question}</summary>
+            <p>{item.answer}</p>
+            {item.link && <a class="button faq-button" href={item.link.href}>{item.link.label}</a>}
+          </details>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-rsvp-form]");
+
+  if (form) {
+    const errorSummary = form.querySelector<HTMLElement>("[data-form-errors]");
+    const status = form.querySelector<HTMLElement>("[data-rsvp-status]");
+    const copyButton = form.querySelector<HTMLButtonElement>("[data-copy-rsvp]");
+    const copyFallback = form.querySelector<HTMLElement>("[data-copy-fallback]");
+    const copyFallbackText = form.querySelector<HTMLTextAreaElement>("[data-copy-fallback-text]");
+    let preparedResponse = "";
+
+    const value = (data: FormData, name: string) => String(data.get(name) ?? "").trim();
+
+    const buildResponse = () => {
+      const data = new FormData(form);
+      const lines = [
+        "Wedding RSVP",
+        "",
+        `Guest name: ${value(data, "name")}`,
+        `Attendance: ${value(data, "attendance")}`
+      ];
+
+      const optionalLines = [
+        ["Contact email", value(data, "email")],
+        ["Party size", value(data, "party_size")],
+        ["Other guests", value(data, "guest_names")],
+        ["Dietary requirements", value(data, "dietary_requirements")],
+        ["Message", value(data, "message")]
+      ];
+
+      optionalLines.forEach(([label, response]) => {
+        if (response) lines.push(`${label}: ${response}`);
+      });
+
+      return lines.join("\n");
+    };
+
+    const showValidationErrors = () => {
+      const invalidFields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(":invalid"));
+      if (invalidFields.length === 0) {
+        if (errorSummary) errorSummary.hidden = true;
+        return false;
+      }
+
+      const friendlyNames: Record<string, string> = {
+        name: "Guest name",
+        email: "Contact email",
+        attendance: "Attendance response",
+        party_size: "Number of guests"
+      };
+      const labels = invalidFields
+        .map((field) => friendlyNames[field.name] ?? field.closest("label")?.textContent?.trim() ?? field.name)
+        .map((label) => label.replace(/\s+/g, " "))
+        .filter(Boolean);
+      const uniqueLabels = [...new Set(labels)];
+      if (errorSummary) {
+        errorSummary.textContent = `Please complete: ${uniqueLabels.join(", ")}.`;
+        errorSummary.hidden = false;
+        errorSummary.focus();
+      }
+      invalidFields[0]?.focus();
+      return true;
+    };
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (showValidationErrors()) return;
+
+      preparedResponse = buildResponse();
+      if (copyButton) copyButton.disabled = false;
+
+      const recipient = form.dataset.recipient ?? "";
+      const guestName = value(new FormData(form), "name");
+      const subjectBase = form.dataset.subject ?? "Wedding RSVP";
+      const subject = guestName ? `${subjectBase} — ${guestName}` : subjectBase;
+      const mailto = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(preparedResponse)}`;
+
+      if (status) {
+        status.textContent = "Your email application should open now. Review the prepared response, then send the email to complete your RSVP.";
+      }
+      window.location.href = mailto;
+    });
+
+    copyButton?.addEventListener("click", async () => {
+      if (!preparedResponse) return;
+      try {
+        await navigator.clipboard.writeText(preparedResponse);
+        if (status) status.textContent = "RSVP response copied. Paste it into an email and send it to the address below.";
+      } catch {
+        if (copyFallback && copyFallbackText) {
+          copyFallback.hidden = false;
+          copyFallbackText.value = preparedResponse;
+          copyFallbackText.focus();
+          copyFallbackText.select();
+        }
+        if (status) status.textContent = "Automatic copying is unavailable. Select the response below, copy it, and paste it into an email.";
+      }
+    });
+
+    form.addEventListener("input", () => {
+      if (errorSummary) errorSummary.hidden = true;
+    });
+  }
+</script>

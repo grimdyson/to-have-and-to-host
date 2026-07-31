@@ -1,0 +1,14 @@
+---
+import { wedding } from "@/data/site";
+---
+
+<header class="site-header" id="top">
+  <a class="brand" href="#top" aria-label={`${wedding.couple.displayName}, back to top`}>
+    <span>{wedding.couple.displayName}</span>
+  </a>
+  <p class="header-detail">
+    <span>{wedding.date.display}</span>
+    <span aria-hidden="true">·</span>
+    <span>{wedding.venue.city}</span>
+  </p>
+</header>

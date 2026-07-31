@@ -1,0 +1,78 @@
+TO HAVE AND TO HOST PERSONAL-USE LICENCE
+Version 1.0 — Review Draft
+
+Copyright (c) 2026 Tim Dyson. All rights reserved.
+
+IMPORTANT: This is a review draft of a custom source-available licence. It should receive appropriate legal review before public release.
+
+1. DEFINITIONS
+
+“Template” means the To Have and To Host source code, design, documentation, assets, and other materials distributed with this licence.
+
+“Personal Wedding Use” means use by an individual couple, or by friends or family acting without payment on their behalf, solely to create and operate a website for that couple’s own wedding.
+
+“Commercial Use” means use primarily intended for commercial advantage, monetary compensation, paid client services, resale, licensing revenue, subscription revenue, or operation of a commercial product or service.
+
+2. PERSONAL-USE GRANT
+
+Subject to this licence, the copyright holder grants you a limited, worldwide, non-exclusive, non-transferable, revocable licence to:
+
+a. copy the Template into a private source-code repository;
+b. modify the Template for your own Personal Wedding Use;
+c. deploy the resulting personal wedding website;
+d. share that deployed website with invited guests; and
+e. ask an unpaid friend or family member to help you make those modifications.
+
+No ownership in the original Template is transferred to you.
+
+3. CONDITIONS
+
+You must:
+
+a. retain this licence and all copyright notices in every copy of the Template or substantial portion of its source code;
+b. describe the Template as source-available rather than OSI-approved open source;
+c. avoid suggesting that you created or own the original Template; and
+d. comply with applicable law and respect the privacy and rights of guests and other people whose information you add.
+
+The website footer includes a credit to timdyson.com by default. Keeping that credit is strongly encouraged. In this review draft, the visible footer credit is not an additional condition of the licence grant.
+
+4. RESTRICTIONS
+
+You may not, without separate written permission from the copyright holder:
+
+a. use the Template for Commercial Use;
+b. use the Template in paid client work or as part of a paid wedding, design, development, or consulting service;
+c. sell, rent, sublicense, or otherwise commercially distribute the Template or a substantially similar derivative;
+d. repackage the Template as another template, starter kit, theme, product, course asset, or download;
+e. offer the Template or a derivative through a hosted website-building, software-as-a-service, or template-customisation service;
+f. remove required copyright or licence notices from the source distribution;
+g. claim authorship of the original Template or imply endorsement by the copyright holder; or
+h. use the Template for a purpose other than Personal Wedding Use.
+
+5. SHARING AND REDISTRIBUTION
+
+You may share the deployed personal wedding website with invited guests. You may not publicly redistribute the Template’s source code or your modified source code as a competing or derivative template. Private source hosting for Personal Wedding Use is permitted.
+
+6. THIRD-PARTY MATERIALS
+
+Third-party fonts, software packages, photographs, and other materials remain subject to their own licence terms. This licence does not grant rights that the copyright holder does not possess.
+
+7. TERMINATION
+
+This licence terminates automatically if you breach its terms. On termination, you must stop using and distributing the Template and delete copies under your control, except where retention is required by law. Rights may be restored only with written permission from the copyright holder.
+
+8. NO WARRANTY
+
+THE TEMPLATE IS PROVIDED “AS IS” AND “AS AVAILABLE”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. YOU USE THE TEMPLATE AT YOUR OWN RISK.
+
+9. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER WILL NOT BE LIABLE FOR ANY CLAIM, LOSS, DAMAGE, OR OTHER LIABILITY ARISING FROM OR RELATED TO THE TEMPLATE OR ITS USE, WHETHER IN CONTRACT, TORT, OR OTHERWISE.
+
+10. SEVERABILITY
+
+If any provision of this licence is unenforceable, the remaining provisions remain in effect to the maximum extent permitted by law.
+
+11. SEPARATE PERMISSION
+
+For commercial rights, redistribution rights, or another use outside this licence, obtain separate written permission from the copyright holder.

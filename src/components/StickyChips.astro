@@ -1,0 +1,179 @@
+---
+import { wedding } from "@/data/site";
+---
+
+<div class="sticky-chips" data-sticky-chips>
+  <div class="chip-layout chip-layout-mobile" data-chip-layout="mobile">
+    <div class="chip-scroll" data-chip-scroll>
+      <nav class="chip-nav" aria-label="Wedding sections" data-chip-nav>
+        <span class="chip-indicator" aria-hidden="true" data-chip-indicator></span>
+        {
+          wedding.navigation.map((item) => (
+            <a
+              class="chip"
+              href={`#${item.id}`}
+              data-chip={item.id}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+
+  <div class="chip-layout chip-layout-desktop" data-chip-layout="desktop">
+    <div class="chip-scroll" data-chip-scroll>
+      <nav class="chip-nav" aria-label="Wedding sections" data-chip-nav>
+        <span class="chip-indicator" aria-hidden="true" data-chip-indicator></span>
+        {
+          wedding.navigation.map((item) => (
+            <a
+              class="chip"
+              href={`#${item.id}`}
+              data-chip={item.id}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-sticky-chips]");
+
+  if (root) {
+    const layouts = Array.from(root.querySelectorAll<HTMLElement>("[data-chip-layout]"));
+    const sectionIds = Array.from(root.querySelectorAll<HTMLAnchorElement>("[data-chip]"))
+      .map((chip) => chip.dataset.chip)
+      .filter((id, index, ids): id is string => Boolean(id) && ids.indexOf(id) === index);
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((section): section is HTMLElement => Boolean(section));
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const visibleSections = new Map<string, IntersectionObserverEntry>();
+    let activeSection = sectionIds[0] ?? "";
+    let clickScrolling = false;
+    let clickScrollTimer = 0;
+    let frame = 0;
+
+    const updateLayout = (layout: HTMLElement) => {
+      const nav = layout.querySelector<HTMLElement>("[data-chip-nav]");
+      const indicator = layout.querySelector<HTMLElement>("[data-chip-indicator]");
+      const chip = layout.querySelector<HTMLAnchorElement>(`[data-chip="${activeSection}"]`);
+      if (!nav || !indicator || !chip) return;
+
+      indicator.style.width = `${chip.offsetWidth}px`;
+      indicator.style.transform = `translateX(${chip.offsetLeft}px)`;
+      indicator.dataset.ready = "true";
+
+      layout.querySelectorAll<HTMLAnchorElement>("[data-chip]").forEach((link) => {
+        const isActive = link.dataset.chip === activeSection;
+        link.classList.toggle("is-active", isActive);
+        if (isActive) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    };
+
+    const revealActiveChip = (layout: HTMLElement) => {
+      const scroller = layout.querySelector<HTMLElement>("[data-chip-scroll]");
+      const chip = layout.querySelector<HTMLAnchorElement>(`[data-chip="${activeSection}"]`);
+      if (!scroller || !chip) return;
+
+      const scrollerRect = scroller.getBoundingClientRect();
+      const chipRect = chip.getBoundingClientRect();
+      const overflowLeft = scrollerRect.left + 16 - chipRect.left;
+      const overflowRight = chipRect.right - (scrollerRect.right - 16);
+      const behavior: ScrollBehavior = reducedMotion.matches ? "auto" : "smooth";
+
+      if (overflowLeft > 0) {
+        scroller.scrollTo({ left: scroller.scrollLeft - overflowLeft, behavior });
+      } else if (overflowRight > 0) {
+        scroller.scrollTo({ left: scroller.scrollLeft + overflowRight, behavior });
+      }
+    };
+
+    const renderActiveSection = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        layouts.forEach((layout) => {
+          updateLayout(layout);
+          revealActiveChip(layout);
+        });
+      });
+    };
+
+    const setActiveSection = (id: string) => {
+      if (!id || id === activeSection) return;
+      activeSection = id;
+      renderActiveSection();
+    };
+
+    const chooseVisibleSection = () => {
+      if (clickScrolling) return;
+      const visible = Array.from(visibleSections.values())
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top));
+      if (visible[0]?.target.id) setActiveSection(visible[0].target.id);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => visibleSections.set(entry.target.id, entry));
+        chooseVisibleSection();
+      },
+      { rootMargin: "-18% 0px -62% 0px", threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    const onPageScroll = () => {
+      root.classList.toggle("is-scrolled", window.scrollY > 12);
+      if (clickScrolling || sections.length === 0) return;
+
+      const firstSectionTop = sections[0].getBoundingClientRect().top;
+      if (firstSectionTop > window.innerHeight * 0.38) {
+        setActiveSection(sectionIds[0]);
+        return;
+      }
+
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80;
+      if (atBottom) setActiveSection(sectionIds.at(-1) ?? activeSection);
+    };
+
+    root.querySelectorAll<HTMLAnchorElement>("[data-chip]").forEach((chip) => {
+      chip.addEventListener("click", (event) => {
+        const id = chip.dataset.chip;
+        const target = id ? document.getElementById(id) : null;
+        if (!id || !target) return;
+
+        event.preventDefault();
+        clickScrolling = true;
+        setActiveSection(id);
+        history.pushState(null, "", `#${id}`);
+        target.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth", block: "start" });
+
+        window.clearTimeout(clickScrollTimer);
+        clickScrollTimer = window.setTimeout(() => {
+          clickScrolling = false;
+          chooseVisibleSection();
+        }, reducedMotion.matches ? 50 : 900);
+      });
+    });
+
+    const resizeObserver = new ResizeObserver(renderActiveSection);
+    layouts.forEach((layout) => resizeObserver.observe(layout));
+    window.addEventListener("scroll", onPageScroll, { passive: true });
+    window.addEventListener("resize", renderActiveSection);
+    layouts.forEach((layout) => {
+      layout.querySelector("[data-chip-scroll]")?.addEventListener("scroll", () => updateLayout(layout), { passive: true });
+    });
+
+    document.fonts?.ready.then(renderActiveSection);
+    onPageScroll();
+    renderActiveSection();
+  }
+</script>

@@ -1,0 +1,62 @@
+---
+import Header from "@/components/Header.astro";
+import StickyChips from "@/components/StickyChips.astro";
+import Footer from "@/components/Footer.astro";
+import PasswordGate from "@/components/PasswordGate.astro";
+import { wedding } from "@/data/site";
+import "@/styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = wedding.metadata.title,
+  description = wedding.metadata.description
+} = Astro.props;
+const passwordGateEnabled = wedding.privacy.passwordGateEnabled;
+const defaultThemeMode = wedding.theme.defaultMode;
+---
+
+<!doctype html>
+<html lang={wedding.metadata.language}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="robots" content={wedding.metadata.robots} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={wedding.metadata.image} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={wedding.metadata.image} />
+    <meta name="theme-color" content="#ffffff" />
+    <script is:inline define:vars={{ defaultThemeMode }}>
+      const savedThemeMode = localStorage.getItem("theme-mode");
+      const themeMode = ["system", "light", "dark"].includes(savedThemeMode)
+        ? savedThemeMode
+        : defaultThemeMode;
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      const theme = themeMode === "system" ? systemTheme : themeMode;
+      document.documentElement.dataset.theme = theme;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#111111" : "#ffffff");
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Pinyon+Script&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body data-password-locked={passwordGateEnabled || undefined}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <PasswordGate enabled={passwordGateEnabled} />
+    <Header />
+    <StickyChips />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

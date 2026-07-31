@@ -1,0 +1,21 @@
+{
+  "name": "to-have-and-to-host",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A refined, private-by-default wedding website template built with Astro.",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "password:hash": "node scripts/hash-password.mjs"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.9.3",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {}
+}
