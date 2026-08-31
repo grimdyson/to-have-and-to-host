@@ -1,15 +1,21 @@
 ---
 import { wedding } from "@/data/site";
+
+interface Props {
+  showBackToTop?: boolean;
+}
+
+const { showBackToTop = true } = Astro.props;
 ---
 
-<footer class="site-footer" data-site-footer>
+<footer class:list={["site-footer", { "site-footer--split": !showBackToTop }]} data-site-footer>
   <div class="footer-themes" role="group" aria-label="Display theme">
     <button class="footer-control theme-option" type="button" data-theme-mode="system" aria-pressed="false">System</button>
     <button class="footer-control theme-option" type="button" data-theme-mode="light" aria-pressed="false">Light</button>
     <button class="footer-control theme-option" type="button" data-theme-mode="dark" aria-pressed="false">Dark</button>
   </div>
 
-  <button class="footer-control back-to-top" type="button" data-back-to-top>Back to top</button>
+  {showBackToTop && <button class="footer-control back-to-top" type="button" data-back-to-top>Back to top</button>}
 
   <span class="design-credit">
     <span>{wedding.footer.credit.prefix}</span>
@@ -28,25 +34,39 @@ import { wedding } from "@/data/site";
   type Theme = "light" | "dark";
   type ThemeMode = "system" | "light" | "dark";
 
-  const footer = document.querySelector<HTMLElement>("[data-site-footer]");
-  const themeButtons = footer?.querySelectorAll<HTMLButtonElement>("[data-theme-mode]") ?? [];
-  const backToTop = footer?.querySelector<HTMLButtonElement>("[data-back-to-top]");
+  const themeButtons = document.querySelectorAll<HTMLButtonElement>("[data-site-footer] [data-theme-mode]");
+  const backToTopButtons = document.querySelectorAll<HTMLButtonElement>("[data-site-footer] [data-back-to-top]");
   const metaTheme = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
   const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
-  const savedThemeMode = localStorage.getItem("theme-mode");
+  let savedThemeMode: string | null = null;
+  try {
+    savedThemeMode = localStorage.getItem("theme-mode");
+  } catch {
+    // Storage can be unavailable in hardened or private browser contexts.
+  }
+  const configuredThemeMode = document.documentElement.dataset.themeMode;
   let themeMode: ThemeMode =
     savedThemeMode === "light" || savedThemeMode === "dark" || savedThemeMode === "system"
       ? savedThemeMode
-      : "system";
+      : configuredThemeMode === "light" || configuredThemeMode === "dark" || configuredThemeMode === "system"
+        ? configuredThemeMode
+        : "system";
 
   const applyTheme = (theme: Theme) => {
     document.documentElement.dataset.theme = theme;
     metaTheme?.setAttribute("content", theme === "dark" ? "#111111" : "#ffffff");
   };
 
-  const setThemeMode = (mode: ThemeMode) => {
+  const setThemeMode = (mode: ThemeMode, persist = false) => {
     themeMode = mode;
-    localStorage.setItem("theme-mode", mode);
+    document.documentElement.dataset.themeMode = mode;
+    if (persist) {
+      try {
+        localStorage.setItem("theme-mode", mode);
+      } catch {
+        // The selected theme still applies for the current page.
+      }
+    }
     const theme = mode === "system" ? (systemTheme.matches ? "dark" : "light") : mode;
     applyTheme(theme);
     themeButtons.forEach((button) => {
@@ -62,12 +82,14 @@ import { wedding } from "@/data/site";
   themeButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const mode = button.dataset.themeMode as ThemeMode | undefined;
-      if (mode) setThemeMode(mode);
+      if (mode) setThemeMode(mode, true);
     });
   });
 
-  backToTop?.addEventListener("click", () => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+  backToTopButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+    });
   });
 </script>

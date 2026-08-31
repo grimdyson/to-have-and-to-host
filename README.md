@@ -23,26 +23,26 @@ Do not commit passwords, guest lists, RSVP responses, private documents, or plai
 - Client-side password gate enabled by default
 - `noindex` metadata, restrictive `robots.txt`, and Vercel indexing headers
 - Progressive, resumable setup instructions for people and AI coding assistants
-- A freely licensed placeholder photograph
+- Two configurable, responsive image slots with documented source and alt-text guidance
 - No analytics, guest database, hosted form service, or third-party embed
 
 ## Start here
 
 1. Make a private copy of this repository.
-2. Install the project dependencies with `npm install`.
+2. Install Node.js 22.19 or newer, then install the locked dependencies with `npm ci`.
 3. Open `SETUP.md` and complete one stage at a time.
-4. If you are using an AI coding assistant, ask it to: **“Read `PRD.md` and begin `SETUP.md`.”**
+4. If you are using an AI coding assistant, ask it to: **“Read `SETUP.md` and begin with the first incomplete stage.”**
 
 Your progress is recorded in `SETUP_PROGRESS.md`, so setup can stop and resume without repeating completed decisions.
 
 ## Local development
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-The development server uses the demo password `test`. This credential is development-only and is not loaded by a production build.
+When no password hash is configured, the development server uses the demo password `test`. This fallback is development-only and is never included in a production build.
 
 When you are ready to configure your own password, generate a hash:
 
@@ -50,24 +50,25 @@ When you are ready to configure your own password, generate a hash:
 npm run password:hash
 ```
 
-Add the generated hash to a private `.env.local` file for production builds and to `.env.development.local` if you also want to replace the local demo password:
+Add the generated hash to a private `.env.local` file:
 
 ```text
 PUBLIC_SITE_PASSWORD_HASH="your-64-character-sha256-hash"
 ```
 
-The plaintext password is not saved by the included utility.
+The plaintext password is not saved by the included utility. Vite loads `.env.local` in development too, so the configured password replaces `test` locally. Use `.env.development.local` only when development should use a different hash.
 
 Run the quality checks before publishing:
 
 ```bash
 npm run check
 npm run build
+npm audit
 ```
 
 ## Deploy to Vercel
 
-Import the private GitHub repository into Vercel, add `PUBLIC_SITE_PASSWORD_HASH` under Project Settings → Environment Variables, and deploy. Redeploy after changing the hash or any other build-time variable.
+Import the private GitHub repository into Vercel, add `PUBLIC_SITE_PASSWORD_HASH` under Project Settings → Environment Variables, and deploy. Redeploy after changing the hash or any other build-time variable. Set `wedding.metadata.siteUrl` to the final HTTPS origin so canonical and social-preview URLs are absolute.
 
 See `SETUP.md` for a guided deployment and launch review.
 
@@ -82,6 +83,8 @@ Search indexing is discouraged in several places, but `noindex` is a request to 
 ## Customising the template
 
 Most wedding content is in `src/data/site.ts`. Read `CUSTOMIZE.md` for field-by-field guidance, imagery requirements, and design changes that are safe to make.
+
+The current demo photography is sourced from Unsplash. See [`IMAGE_CREDITS.md`](IMAGE_CREDITS.md) for source links and replacement guidance. Personalised repositories should replace demo images with approved assets and remove stale credits.
 
 ## Licence
 

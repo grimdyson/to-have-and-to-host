@@ -6,9 +6,11 @@
   --muted: #55514d;
   --line: #d9d9d9;
   --cream: #ffffff;
-  --chip-active-text: #ffffff;
+  --error: #a63b2c;
   --venue-scrim-strong: rgba(255, 255, 255, 0.78);
   --venue-scrim-soft: rgba(255, 255, 255, 0.4);
+  --radius-control: 6px;
+  --radius-subtle: 4px;
   --font-display: "Pinyon Script", cursive;
   --font-small-caps: "Libre Baskerville", Georgia, serif;
   --font-body: "Libre Baskerville", Georgia, serif;
@@ -23,7 +25,6 @@
   --muted: #c5c1bb;
   --line: #3a3a36;
   --cream: #181816;
-  --chip-active-text: #111111;
   --venue-scrim-strong: rgba(17, 17, 17, 0.9);
   --venue-scrim-soft: rgba(17, 17, 17, 0.68);
 }
@@ -32,6 +33,10 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 html {
@@ -381,6 +386,7 @@ p {
 }
 
 .date-line {
+  display: block;
   font-size: 0.85rem;
   font-weight: 700;
   margin-top: 28px;
@@ -388,7 +394,7 @@ p {
 
 .hero-photo {
   aspect-ratio: 1.91 / 1;
-  border-radius: 4px;
+  border-radius: var(--radius-subtle);
   display: block;
   filter: grayscale(1);
   height: auto;
@@ -425,7 +431,7 @@ p {
   align-items: center;
   background: var(--ink);
   border: 1px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   color: var(--paper);
   cursor: pointer;
   display: inline-flex;
@@ -643,6 +649,7 @@ p {
 
 .inspiration-link {
   justify-self: start;
+  margin-top: 24px;
 }
 
 .rsvp-panel {
@@ -692,7 +699,7 @@ textarea,
 select {
   background: var(--cream);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   color: var(--ink);
   min-height: 48px;
   padding: 13px 15px;
@@ -707,7 +714,7 @@ textarea {
 input:user-invalid,
 textarea:user-invalid,
 select:user-invalid {
-  border-color: #a63b2c;
+  border-color: var(--error);
 }
 
 input[type="radio"] {
@@ -723,16 +730,16 @@ input[type="radio"] {
   gap: 12px;
 }
 
-.radio-option {
+.rsvp-form .radio-option {
   align-items: center;
   cursor: pointer;
-  display: flex !important;
-  gap: 11px !important;
+  display: flex;
+  gap: 11px;
 }
 
 .form-error-summary {
-  background: color-mix(in srgb, #a63b2c 9%, var(--paper));
-  border-left: 3px solid #a63b2c;
+  background: color-mix(in srgb, var(--error) 9%, var(--paper));
+  border-left: 3px solid var(--error);
   color: var(--ink);
   line-height: 1.6;
   padding: 14px 16px;
@@ -741,6 +748,11 @@ input[type="radio"] {
 .rsvp-status {
   min-height: 1.7em;
   margin: 0;
+}
+
+.rsvp-copy-details {
+  display: grid;
+  gap: 20px;
 }
 
 .rsvp-fallback {
@@ -813,20 +825,33 @@ input[type="radio"] {
 }
 
 .password-gate {
-  align-items: center;
+  align-items: stretch;
   background: var(--paper);
   display: grid;
+  grid-template-rows: minmax(min-content, 1fr) auto;
   inset: 0;
   overflow-y: auto;
-  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  padding: 0;
   position: fixed;
   visibility: visible !important;
   z-index: 150;
 }
 
-.password-gate[hidden],
 body:not([data-password-locked]) .password-gate {
   display: none;
+}
+
+.password-gate-panel {
+  display: grid;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 20px max(20px, env(safe-area-inset-left));
+}
+
+body[data-password-locked] .password-gate .site-footer {
+  background: var(--paper);
+  bottom: 0;
+  position: sticky;
+  visibility: visible;
+  z-index: 1;
 }
 
 .password-card {
@@ -838,7 +863,7 @@ body:not([data-password-locked]) .password-gate {
 
 .password-card h1 {
   font-size: clamp(4rem, 10vw, 6.5rem);
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .password-card > label {
@@ -861,7 +886,7 @@ body:not([data-password-locked]) .password-gate {
 .password-row button {
   background: var(--ink);
   border: 1px solid var(--ink);
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   color: var(--paper);
   cursor: pointer;
   min-height: 48px;
@@ -869,7 +894,7 @@ body:not([data-password-locked]) .password-gate {
 }
 
 .password-message {
-  color: #a63b2c;
+  color: var(--error);
   min-height: 1.6em;
 }
 
@@ -892,7 +917,7 @@ body:not([data-password-locked]) .password-gate {
 
 code {
   background: color-mix(in srgb, var(--ink) 8%, transparent);
-  border-radius: 4px;
+  border-radius: var(--radius-subtle);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 0.9em;
   padding: 0.12em 0.35em;
@@ -916,9 +941,8 @@ code {
   padding: 12px max(clamp(18px, 4vw, 56px), env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(clamp(18px, 4vw, 56px), env(safe-area-inset-left));
 }
 
-.site-footer p {
-  line-height: 1.7;
-  margin: 0;
+.site-footer--split {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .footer-themes {
@@ -980,7 +1004,6 @@ code {
     max-width: 680px;
     position: static;
   }
-
 }
 
 @media (max-width: 760px) {

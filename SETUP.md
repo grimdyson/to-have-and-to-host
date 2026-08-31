@@ -11,7 +11,7 @@ You can stop after any stage. Confirmed decisions and the next action belong in 
 
 Before making changes:
 
-1. Read `PRD.md`, `SETUP.md`, `SETUP_PROGRESS.md`, and `VOICE_AND_TONE.md` completely.
+1. Read `SETUP.md`, `SETUP_PROGRESS.md`, and `VOICE_AND_TONE.md` completely.
 2. Inspect the current repository and its uncommitted changes.
 3. Determine whether this is a new setup or a resumed setup.
 4. Continue from the first incomplete stage in `SETUP_PROGRESS.md`.
@@ -35,7 +35,7 @@ Before sharing any personal details:
 - Create or duplicate the template into a private GitHub repository.
 - Open the repository settings and confirm its visibility says **Private**.
 - Ensure `.env.local` is ignored by Git.
-- Install Node.js if needed, then run `npm install`.
+- Install Node.js 22.19 or newer if needed, then run `npm ci`.
 - Run `npm run dev` and open the local address shown in the terminal.
 
 The local development gate uses the demo password `test`. The hint is shown only during local development. Production builds do not use this demo credential and will show “Password setup required” until a production hash is configured.
@@ -50,7 +50,7 @@ Collect and confirm:
 - Optional full names for formal metadata
 - A short welcome sentence, or enough natural language to draft one
 
-Update `wedding.couple` and `wedding.hero` in `src/data/site.ts`. Keep the introduction concise and follow `VOICE_AND_TONE.md`.
+Update `wedding.couple` and `wedding.hero` in `src/data/site.ts`. Keep the introduction concise and follow `VOICE_AND_TONE.md`. The default metadata title and description are derived from `wedding.couple`; review the rendered metadata and override it only when different wording is intentional.
 
 ## Stage 3 — Date, venue and key details
 
@@ -60,10 +60,9 @@ Collect and confirm:
 - Venue name
 - City or region
 - Selectable street address
-- Wedding-location timezone in IANA form, such as `Australia/Sydney` or `Europe/London`
 - RSVP deadline
 
-Update `wedding.date`, `wedding.venue`, `wedding.details`, `wedding.rsvp.deadline`, and any matching FAQ answer. Check repeated facts for consistency.
+Update `wedding.date`, `wedding.venue`, `wedding.rsvp.deadline`, and any matching FAQ answer. The key-detail cards reuse those source values automatically; check remaining narrative copy for consistency.
 
 ## Stage 4 — Schedule
 
@@ -90,9 +89,11 @@ Before completing this stage:
 
 ## Stage 6 — Dress code
 
-Collect the chosen dress-code name, a one-sentence explanation, and only the practical guidance guests need. Avoid assumptions based on gender. Mention terrain, climate, cultural expectations, or footwear only when confirmed.
+Collect the chosen dress-code name, a one-sentence explanation, and only the practical guidance guests need. Update `wedding.dressCode.guidance` and `wedding.dressCode.considerations`; remove unused considerations rather than publishing filler. Avoid assumptions based on gender. Mention terrain, climate, cultural expectations, or footwear only when confirmed.
 
-Set `inspirationLink.enabled` to `true` only after checking the linked page.
+Once the dress-code content is confirmed, update `inspirationLink.href` so its Pinterest search matches that guidance. Keep the URL prefix `https://au.pinterest.com/search/pins/?q=` and replace everything after `?q=` with a URL-encoded search phrase for the chosen dress code, such as `black%20tie%20wedding%20outfit`.
+
+Set `inspirationLink.enabled` to `true` only after opening the resulting search and checking that its outfit examples are appropriate for the wedding.
 
 ## Stage 7 — RSVP
 
@@ -122,7 +123,7 @@ Internal FAQ links should use page anchors such as `#travel`, `#dress-code`, and
 
 ## Stage 9 — Images and visual checks
 
-The starter includes freely licensed placeholder photographs for the hero and venue card. Prompt the user to choose or supply both images before replacing them, and confirm the preferred focal point and concise alt text for each. Add personal photographs only inside the private personalised repository.
+The starter includes replaceable demo photographs for the hero and venue card. Their source details are recorded in `IMAGE_CREDITS.md`. Prompt the user to choose or supply both images before replacing them, and confirm the preferred focal point and concise alt text for each. Add personal photographs only inside the private personalised repository.
 
 Ask whether the site's photography should appear in colour or monochrome. If the user chooses a colour hero and has not explicitly requested a monochrome treatment, treat that as their colour preference and set `wedding.imagery.useColour` to `true`. This removes the CSS grayscale filter from both the hero and venue image. Keep the venue's light/dark overlay scrim in either mode so its text and map buttons retain clear contrast.
 
@@ -141,7 +142,7 @@ Recommended venue-card image:
 - A focal point that remains useful behind the venue details and responsive crop
 - Plain, meaningful alt text in `wedding.venue.image.alt`
 
-Replace `public/og-image.jpg` with a 1200 × 630 social image. Remove EXIF, GPS, camera-owner, and other embedded metadata before committing. Use descriptive filenames without private details.
+The hero image is also the social-sharing image by default. If its crop does not work well in link previews, add a dedicated 1200 × 630 asset and set `wedding.metadata.image` to its public path. Remove EXIF, GPS, camera-owner, and other embedded metadata before committing. Use descriptive filenames without private details.
 
 Complete the image change as one clean workflow:
 
@@ -171,7 +172,7 @@ PUBLIC_SITE_PASSWORD_HASH="your-generated-hash"
 
 Do not commit `.env.local` or the plaintext password. The `PUBLIC_` prefix means the hash is included in the browser bundle; this is expected and is why the gate provides casual privacy rather than strong security.
 
-To replace the `test` password used by `npm run dev`, add the same setting to `.env.development.local`. That file is also ignored by Git. The tracked `.env.development` contains only the public local-demo credential and is never loaded by a normal production build.
+Vite loads `.env.local` in development as well as production builds, so this configured password also replaces `test` locally. If development should use a different password, put that password's hash in `.env.development.local`; the mode-specific file takes precedence and is also ignored by Git. The built-in demo credential is enabled only when the development server has no configured password hash, and production builds never use it.
 
 In Vercel:
 
@@ -191,8 +192,10 @@ Update:
 
 - `wedding.metadata.title`
 - `wedding.metadata.description`
-- `wedding.metadata.image`
+- `wedding.metadata.siteUrl`
 - `wedding.footer.credit`
+
+Set `wedding.metadata.siteUrl` to the deployed site's HTTPS origin, without a page path, so canonical and social-preview URLs are absolute. The hero image is also used for Open Graph and Twitter previews by default. Leave `wedding.metadata.image` as `null` to keep one shared asset, or set it to a public asset path only when the couple wants a dedicated social-sharing crop.
 
 Keep `noindex, nofollow, noarchive` unless the couple explicitly understands and accepts public indexing. Keep the `timdyson.com` credit in place by default.
 
@@ -209,6 +212,7 @@ Before deployment:
 - Confirm no guest list or RSVP response is shipped in the browser bundle.
 - Confirm no `.env` file is tracked.
 - Run `npm run check` and `npm run build`.
+- Run `npm audit` and resolve high-severity production advisories before deployment.
 - Test keyboard navigation and visible focus states.
 - Test light, dark and system themes.
 - Test reduced-motion behaviour.

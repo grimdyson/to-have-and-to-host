@@ -12,7 +12,7 @@ Use `SETUP.md` for the guided process. Use this reference when you already know 
 | Date | `wedding.date` |
 | Hero introduction and image | `wedding.hero` |
 | Colour or monochrome image treatment | `wedding.imagery.useColour` |
-| Venue, address, timezone and maps | `wedding.venue` |
+| Venue, address and maps | `wedding.venue` |
 | Sticky section chips | `wedding.navigation` |
 | Key details | `wedding.details` |
 | Schedule | `wedding.schedule` |
@@ -25,7 +25,7 @@ Use `SETUP.md` for the guided process. Use this reference when you already know 
 | Default theme mode | `wedding.theme` |
 | Password-gate switch | `wedding.privacy` |
 
-When the same fact appears in more than one configured section, update every occurrence and verify the rendered page. Do not move passwords, guest lists, RSVP submissions, or other secrets into this file.
+Core venue, date and RSVP-deadline facts are reused when the detail cards are built, so change their source objects rather than copying values into multiple sections. Narrative FAQ answers can still repeat facts intentionally; review those whenever related content changes. Do not move passwords, guest lists, RSVP submissions, or other secrets into this file.
 
 ## Navigation and sections
 
@@ -44,12 +44,16 @@ If a section ID changes, update the HTML section, navigation configuration and a
 
 ## Images
 
-- `public/wedding-placeholder.jpg`: hero image, 1600 × 850 recommended
-- `public/venue-placeholder.jpg`: venue-card image, 1500 × 1000 recommended
-- `public/og-image.jpg`: social sharing image, exactly 1200 × 630 recommended
+- `wedding.hero.image.src`: hero image, 1600 × 850 recommended; also used for social sharing by default
+- `wedding.venue.image.src`: venue-card image, 1500 × 1000 recommended
+- `wedding.metadata.image`: optional dedicated social-sharing image, exactly 1200 × 630 recommended
 - `public/favicon.svg`: browser icon
 
-Optimise images before committing them. Remove EXIF and GPS metadata. Keep important subjects central for the mobile crop, and update alt text in `wedding.hero.image.alt`.
+Store local image assets in `public/`. Optimise them before committing, remove EXIF and GPS metadata, keep important subjects central for the mobile crop, and update both configured alt descriptions. Record third-party sources in `IMAGE_CREDITS.md` and remove superseded credits with their images.
+
+Leave `wedding.metadata.image` as `null` to reuse the hero image for Open Graph and Twitter previews. Set it to a public asset path only when a dedicated social-sharing crop is required.
+
+Set `wedding.metadata.siteUrl` to the final HTTPS origin before launch. When it is `null`, local previews use relative metadata paths; when configured, canonical and social-image URLs render as absolute URLs.
 
 ## RSVP
 
@@ -65,7 +69,7 @@ The gate is enabled at `wedding.privacy.passwordGateEnabled`. Keep it enabled fo
 
 The required hash belongs in `.env.local` and in Vercel as `PUBLIC_SITE_PASSWORD_HASH`. Generate it with `npm run password:hash`.
 
-For local development, the tracked demo password is `test`. Override it privately in `.env.development.local` if required. Production builds never use the development demo file.
+For local development, the built-in demo password is `test` only when no hash is configured. `.env.local` applies in development too; use `.env.development.local` only when development should use a different password. Production builds never use the demo credential.
 
 Never place the plaintext password in source code. Never add a shared fallback password.
 
@@ -85,7 +89,7 @@ Change tokens before editing individual selectors, and verify contrast in both t
 - `src/components/StickyChips.astro`: section tracking, active indicator and horizontal reveal logic
 - `src/components/PasswordGate.astro`: casual-privacy gate
 - `src/components/Header.astro`: compact identity header
-- `src/components/Footer.astro`: local time, themes, back-to-top and design credit
+- `src/components/Footer.astro`: themes, conditional back-to-top control and design credit
 - `src/layouts/BaseLayout.astro`: metadata, global shell and privacy defaults
 - `src/pages/index.astro`: the single-page presentation and RSVP email preparation
 

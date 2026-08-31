@@ -7,7 +7,7 @@ import { wedding } from "@/data/site";
     <span>{wedding.couple.displayName}</span>
   </a>
   <p class="header-detail">
-    <span>{wedding.date.display}</span>
+    <time datetime={wedding.date.iso}>{wedding.date.display}</time>
     <span aria-hidden="true">·</span>
     <span>{wedding.venue.city}</span>
   </p>

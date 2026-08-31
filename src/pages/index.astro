@@ -10,7 +10,7 @@ import { wedding } from "@/data/site";
       <h1 id="hero-title">
         {wedding.couple.partnerOne}<span>and</span>{wedding.couple.partnerTwo}
       </h1>
-      <p class="date-line">{wedding.date.display}</p>
+      <time class="date-line" datetime={wedding.date.iso}>{wedding.date.display}</time>
       <img
         class:list={["hero-photo", { "image-colour": wedding.imagery.useColour }]}
         src={wedding.hero.image.src}
@@ -30,7 +30,7 @@ import { wedding } from "@/data/site";
   <section class="section section-anchor two-column" id="details" aria-labelledby="details-title">
     <div>
       <p class="eyebrow">{wedding.details.eyebrow}</p>
-      <h3 class="section-heading section-heading-compact" id="details-title">{wedding.details.title}</h3>
+      <h2 class="section-heading section-heading-compact" id="details-title">{wedding.details.title}</h2>
     </div>
     <div class="detail-list">
       {
@@ -118,8 +118,24 @@ import { wedding } from "@/data/site";
         <p>{wedding.dressCode.description}</p>
       </div>
       <div class="info-stack dress-code-notes">
+        <article>
+          <h3>{wedding.dressCode.guidance.title}</h3>
+          <p>{wedding.dressCode.guidance.description}</p>
+          {
+            wedding.dressCode.inspirationLink.enabled && (
+              <a
+                class="button secondary-button inspiration-link"
+                href={wedding.dressCode.inspirationLink.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {wedding.dressCode.inspirationLink.label}
+              </a>
+            )
+          }
+        </article>
         {
-          wedding.dressCode.notes.map((item) => (
+          wedding.dressCode.considerations.map((item) => (
             <article>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
@@ -127,18 +143,6 @@ import { wedding } from "@/data/site";
           ))
         }
       </div>
-      {
-        wedding.dressCode.inspirationLink.enabled && (
-          <a
-            class="button secondary-button inspiration-link"
-            href={wedding.dressCode.inspirationLink.href}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {wedding.dressCode.inspirationLink.label}
-          </a>
-        )
-      }
     </div>
   </section>
 
@@ -225,14 +229,16 @@ import { wedding } from "@/data/site";
         </div>
 
         <p class="rsvp-status" data-rsvp-status aria-live="polite"></p>
-        <label class="rsvp-copy-fallback" data-copy-fallback hidden>
-          Select and copy your RSVP response
-          <textarea rows="10" readonly data-copy-fallback-text></textarea>
-        </label>
-        <p class="rsvp-fallback">
-          If no email application opens, copy your response and email it to
-          <a href={`mailto:${wedding.rsvp.recipientEmail}`}>{wedding.rsvp.recipientEmail}</a>.
-        </p>
+        <div class="rsvp-copy-details" data-copy-details hidden>
+          <label class="rsvp-copy-fallback">
+            Select and copy your RSVP response
+            <textarea rows="10" readonly data-copy-fallback-text></textarea>
+          </label>
+          <p class="rsvp-fallback">
+            If no email application opens, copy your response and email it to
+            <a href={`mailto:${wedding.rsvp.recipientEmail}`}>{wedding.rsvp.recipientEmail}</a>.
+          </p>
+        </div>
       </form>
     </div>
   </section>
@@ -265,11 +271,23 @@ import { wedding } from "@/data/site";
     const errorSummary = form.querySelector<HTMLElement>("[data-form-errors]");
     const status = form.querySelector<HTMLElement>("[data-rsvp-status]");
     const copyButton = form.querySelector<HTMLButtonElement>("[data-copy-rsvp]");
-    const copyFallback = form.querySelector<HTMLElement>("[data-copy-fallback]");
+    const copyDetails = form.querySelector<HTMLElement>("[data-copy-details]");
     const copyFallbackText = form.querySelector<HTMLTextAreaElement>("[data-copy-fallback-text]");
     let preparedResponse = "";
 
     const value = (data: FormData, name: string) => String(data.get(name) ?? "").trim();
+
+    const hideCopyDetails = () => {
+      if (copyDetails) copyDetails.hidden = true;
+      if (copyFallbackText) copyFallbackText.value = "";
+    };
+
+    const clearPreparedResponse = () => {
+      preparedResponse = "";
+      if (copyButton) copyButton.disabled = true;
+      if (status) status.textContent = "";
+      hideCopyDetails();
+    };
 
     const buildResponse = () => {
       const data = new FormData(form);
@@ -327,6 +345,7 @@ import { wedding } from "@/data/site";
       if (showValidationErrors()) return;
 
       preparedResponse = buildResponse();
+      hideCopyDetails();
       if (copyButton) copyButton.disabled = false;
 
       const recipient = form.dataset.recipient ?? "";
@@ -338,18 +357,20 @@ import { wedding } from "@/data/site";
       if (status) {
         status.textContent = "Your email application should open now. Review the prepared response, then send the email to complete your RSVP.";
       }
-      window.location.href = mailto;
+      window.open(mailto, "_blank", "noopener,noreferrer");
     });
 
     copyButton?.addEventListener("click", async () => {
       if (!preparedResponse) return;
+      if (copyDetails && copyFallbackText) {
+        copyDetails.hidden = false;
+        copyFallbackText.value = preparedResponse;
+      }
       try {
         await navigator.clipboard.writeText(preparedResponse);
         if (status) status.textContent = "RSVP response copied. Paste it into an email and send it to the address below.";
       } catch {
-        if (copyFallback && copyFallbackText) {
-          copyFallback.hidden = false;
-          copyFallbackText.value = preparedResponse;
+        if (copyFallbackText) {
           copyFallbackText.focus();
           copyFallbackText.select();
         }
@@ -359,6 +380,7 @@ import { wedding } from "@/data/site";
 
     form.addEventListener("input", () => {
       if (errorSummary) errorSummary.hidden = true;
+      if (preparedResponse) clearPreparedResponse();
     });
   }
 </script>

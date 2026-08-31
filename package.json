@@ -5,6 +5,9 @@
   "description": "A refined, private-by-default wedding website template built with Astro.",
   "license": "SEE LICENSE IN LICENSE",
   "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -13,9 +16,10 @@
     "password:hash": "node scripts/hash-password.mjs"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "astro": "^5.9.3",
-    "typescript": "^5.8.3"
+    "astro": "^7.2.9"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3"
+  }
 }

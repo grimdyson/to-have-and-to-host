@@ -1,4 +1,4 @@
-export type NavItem = {
+type NavItem = {
   id: "details" | "schedule" | "travel" | "dress-code" | "rsvp" | "faqs";
   label: string;
 };
@@ -12,42 +12,79 @@ type FaqItem = {
   };
 };
 
+type SiteMetadata = {
+  language: string;
+  title: string;
+  description: string;
+  siteUrl: string | null;
+  image: string | null;
+  robots: string;
+};
+
+const couple = {
+  partnerOne: "Lauren",
+  partnerTwo: "Ipsum",
+  fullNames: "Lauren Example and Ipsum Example",
+  displayName: "Lauren & Ipsum"
+} as const;
+
+const date = {
+  display: "Saturday, 18 October 2027",
+  iso: "2027-10-18"
+} as const;
+
+const venue = {
+  name: "Your Venue",
+  city: "Your City, Region",
+  address: "Add your venue address",
+  image: {
+    src: "/wesley-tingey-9INtcavGkko-unsplash.jpg",
+    alt: "Wedding guests celebrating together on the dance floor"
+  },
+  maps: {
+    google: "https://www.google.com/maps/search/?api=1&query=Your%20Venue",
+    apple: "https://maps.apple.com/?q=Your%20Venue"
+  }
+} as const;
+
+const rsvp = {
+  eyebrow: "RSVP",
+  title: "Kindly reply",
+  deadline: "Friday, 3 September 2027",
+  recipientEmail: "rsvp@example.com",
+  emailSubject: "Wedding RSVP",
+  collectContactEmail: true,
+  collectPartySize: true,
+  attendanceOptions: {
+    attending: "Joyfully attending",
+    notAttending: "Unable to attend"
+  }
+} as const;
+
+const metadata: SiteMetadata = {
+  language: "en-AU",
+  title: `${couple.displayName} | Wedding`,
+  description: `Wedding details, schedule, travel information and RSVP for ${couple.fullNames}.`,
+  siteUrl: null,
+  image: null,
+  robots: "noindex, nofollow, noarchive"
+};
+
 export const wedding = {
-  couple: {
-    partnerOne: "Lauren",
-    partnerTwo: "Ipsum",
-    fullNames: "Lauren Example and Ipsum Example",
-    displayName: "Lauren & Ipsum"
-  },
-  date: {
-    display: "Saturday, 18 October 2027",
-    iso: "2027-10-18"
-  },
+  couple,
+  date,
   hero: {
     eyebrow: "Celebrate with us",
     introduction: "Join us for dinner, drinks and dancing as we celebrate our wedding. There will be good food, plenty of stories and room for everyone on the dance floor. Come ready to raise a glass and make some memories.",
     image: {
-      src: "/wedding-placeholder.jpg",
-      alt: "A couple kissing in a grass field in a black-and-white photograph"
+      src: "/wesley-tingey-mk_k0IEw7b0-unsplash.jpg",
+      alt: "Newlyweds kissing in the back seat of a red car"
     }
   },
   imagery: {
-    useColour: false
+    useColour: true
   },
-  venue: {
-    name: "Your Venue",
-    city: "Your City, Region",
-    address: "Add your venue address",
-    timezone: "Australia/Sydney",
-    image: {
-      src: "/venue-placeholder.jpg",
-      alt: "A white garden venue framed by tall trees"
-    },
-    maps: {
-      google: "https://www.google.com/maps/search/?api=1&query=Your%20Venue",
-      apple: "https://maps.apple.com/?q=Your%20Venue"
-    }
-  },
+  venue,
   navigation: [
     { id: "details", label: "Details" },
     { id: "schedule", label: "Schedule" },
@@ -60,10 +97,10 @@ export const wedding = {
     eyebrow: "The gathering",
     title: "A celebration with our favourite people.",
     items: [
-      { label: "Venue", value: "Your Venue" },
-      { label: "Where", value: "Your City, Region" },
-      { label: "When", value: "Saturday, 18 October 2027" },
-      { label: "RSVP by", value: "Friday, 3 September 2027" }
+      { label: "Venue", value: venue.name },
+      { label: "Where", value: venue.city },
+      { label: "When", value: date.display },
+      { label: "RSVP by", value: rsvp.deadline }
     ]
   },
   schedule: {
@@ -105,7 +142,7 @@ export const wedding = {
     notes: [
       {
         title: "Venue",
-        description: "The ceremony and reception will both be held at Your Venue."
+        description: `The ceremony and reception will both be held at ${venue.name}.`
       },
       {
         title: "Transport",
@@ -126,35 +163,23 @@ export const wedding = {
     title: "What to wear",
     name: "Your dress code",
     description: "Describe the level of formality in one clear sentence, including any practical advice for the venue.",
-    notes: [
-      {
-        title: "A little guidance",
-        description: "Add concise examples that help guests dress with confidence without assigning clothing by gender."
-      },
+    guidance: {
+      title: "A little guidance",
+      description: "Add concise examples that help guests dress with confidence without assigning clothing by gender."
+    },
+    considerations: [
       {
         title: "Keep in mind",
         description: "Mention grass, weather, cultural traditions or other practical considerations here."
       }
     ],
     inspirationLink: {
-      enabled: false,
-      href: "https://www.pinterest.com/",
+      enabled: true,
+      href: "https://au.pinterest.com/search/pins/?q=black%20tie%20wedding%20outfit",
       label: "View outfit inspiration"
     }
   },
-  rsvp: {
-    eyebrow: "RSVP",
-    title: "Kindly reply",
-    deadline: "Friday, 3 September 2027",
-    recipientEmail: "rsvp@example.com",
-    emailSubject: "Wedding RSVP",
-    collectContactEmail: true,
-    collectPartySize: true,
-    attendanceOptions: {
-      attending: "Joyfully attending",
-      notAttending: "Unable to attend"
-    }
-  },
+  rsvp,
   faqs: {
     eyebrow: "FAQs",
     title: "Helpful answers",
@@ -187,7 +212,7 @@ export const wedding = {
         answer: "Add the confirmed parking arrangements here.",
         link: { href: "#travel", label: "Travel" }
       }
-    ] as FaqItem[]
+    ] satisfies FaqItem[]
   },
   footer: {
     credit: {
@@ -196,13 +221,7 @@ export const wedding = {
       href: "https://timdyson.com"
     }
   },
-  metadata: {
-    language: "en-AU",
-    title: "Lauren & Ipsum | Wedding",
-    description: "Wedding details, schedule, travel information and RSVP for Lauren and Ipsum.",
-    image: "/og-image.jpg",
-    robots: "noindex, nofollow, noarchive"
-  },
+  metadata,
   theme: {
     defaultMode: "system" as "system" | "light" | "dark"
   },
@@ -210,5 +229,3 @@ export const wedding = {
     passwordGateEnabled: true
   }
 } as const;
-
-export type Wedding = typeof wedding;

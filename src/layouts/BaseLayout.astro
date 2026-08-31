@@ -17,6 +17,13 @@ const {
 } = Astro.props;
 const passwordGateEnabled = wedding.privacy.passwordGateEnabled;
 const defaultThemeMode = wedding.theme.defaultMode;
+const socialImagePath = wedding.metadata.image ?? wedding.hero.image.src;
+const socialImage = wedding.metadata.siteUrl
+  ? new URL(socialImagePath, wedding.metadata.siteUrl).href
+  : socialImagePath;
+const canonicalUrl = wedding.metadata.siteUrl
+  ? new URL(Astro.url.pathname, wedding.metadata.siteUrl).href
+  : null;
 ---
 
 <!doctype html>
@@ -28,21 +35,29 @@ const defaultThemeMode = wedding.theme.defaultMode;
     <meta name="robots" content={wedding.metadata.robots} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={wedding.metadata.image} />
+    <meta property="og:image" content={socialImage} />
     <meta property="og:type" content="website" />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content={wedding.metadata.image} />
+    <meta name="twitter:image" content={socialImage} />
     <meta name="theme-color" content="#ffffff" />
     <script is:inline define:vars={{ defaultThemeMode }}>
-      const savedThemeMode = localStorage.getItem("theme-mode");
+      let savedThemeMode = null;
+      try {
+        savedThemeMode = localStorage.getItem("theme-mode");
+      } catch {
+        // Storage can be unavailable in hardened or private browser contexts.
+      }
       const themeMode = ["system", "light", "dark"].includes(savedThemeMode)
         ? savedThemeMode
         : defaultThemeMode;
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
       const theme = themeMode === "system" ? systemTheme : themeMode;
+      document.documentElement.dataset.themeMode = themeMode;
       document.documentElement.dataset.theme = theme;
       document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#111111" : "#ffffff");
     </script>
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -5,5 +5,4 @@ dist/
 .env
 .env.*
 !.env.example
-!.env.development
 *.log
