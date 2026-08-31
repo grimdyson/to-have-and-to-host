@@ -88,8 +88,8 @@ The current demo photography is sourced from Unsplash. See [`IMAGE_CREDITS.md`](
 
 ## Licence
 
-To Have and To Host is **source-available**, not OSI-approved open source. It is free for personal, non-commercial wedding use under the custom terms in `LICENSE`. Paid client work, resale, repackaging, hosted builder services, and other commercial uses require separate permission.
+To Have and To Host is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE). It is free for personal and other non-commercial use. Commercial use requires separate permission.
 
-The licence is currently marked as a review draft and should receive appropriate legal review before the template is publicly released.
+This is a source-available licence, not an OSI-approved open-source licence. Anyone redistributing the project must include the licence terms and its required copyright notice.
 
 Website design credit defaults to [timdyson.com](https://timdyson.com).
