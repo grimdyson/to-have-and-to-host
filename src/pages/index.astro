@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { wedding } from "@/data/site";
+import { withBase } from "@/utils/paths";
 ---
 
 <BaseLayout>
@@ -13,7 +14,7 @@ import { wedding } from "@/data/site";
       <time class="date-line" datetime={wedding.date.iso}>{wedding.date.display}</time>
       <img
         class:list={["hero-photo", { "image-colour": wedding.imagery.useColour }]}
-        src={wedding.hero.image.src}
+        src={withBase(wedding.hero.image.src)}
         alt={wedding.hero.image.alt}
         width="1600"
         height="850"
@@ -72,7 +73,7 @@ import { wedding } from "@/data/site";
     <div class:list={["venue-card", { "image-colour": wedding.imagery.useColour }]}>
       <img
         class="venue-card-image"
-        src={wedding.venue.image.src}
+        src={withBase(wedding.venue.image.src)}
         alt={wedding.venue.image.alt}
         width="1500"
         height="1000"

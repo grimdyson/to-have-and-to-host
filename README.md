@@ -72,6 +72,12 @@ Import the private GitHub repository into Vercel, add `PUBLIC_SITE_PASSWORD_HASH
 
 See `SETUP.md` for a guided deployment and launch review.
 
+## Deploy a demo to GitHub Pages
+
+The included GitHub Actions workflow can publish `main` as a public demo at no hosting cost. It handles the repository base path, runs the project checks, builds the static site and deploys only the generated output. See [`GITHUB_PAGES.md`](GITHUB_PAGES.md) for the password variables, Pages settings and custom-domain instructions.
+
+Live demo: [grimdyson.github.io/to-have-and-to-host](https://grimdyson.github.io/to-have-and-to-host/) — use the password `test`.
+
 ## Important privacy limits
 
 The password gate is a client-side convenience intended to prevent casual access. It is not strong authentication. A determined person may inspect the generated website files and public password hash. Use server-side authentication or Vercel deployment protection if your wedding requires stronger access control.

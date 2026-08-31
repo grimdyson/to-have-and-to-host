@@ -4,6 +4,7 @@ import StickyChips from "@/components/StickyChips.astro";
 import Footer from "@/components/Footer.astro";
 import PasswordGate from "@/components/PasswordGate.astro";
 import { wedding } from "@/data/site";
+import { withBase } from "@/utils/paths";
 import "@/styles/global.css";
 
 interface Props {
@@ -17,12 +18,13 @@ const {
 } = Astro.props;
 const passwordGateEnabled = wedding.privacy.passwordGateEnabled;
 const defaultThemeMode = wedding.theme.defaultMode;
-const socialImagePath = wedding.metadata.image ?? wedding.hero.image.src;
-const socialImage = wedding.metadata.siteUrl
-  ? new URL(socialImagePath, wedding.metadata.siteUrl).href
+const socialImagePath = withBase(wedding.metadata.image ?? wedding.hero.image.src);
+const siteUrl = wedding.metadata.siteUrl ?? Astro.site?.href ?? null;
+const socialImage = siteUrl
+  ? new URL(socialImagePath, siteUrl).href
   : socialImagePath;
-const canonicalUrl = wedding.metadata.siteUrl
-  ? new URL(Astro.url.pathname, wedding.metadata.siteUrl).href
+const canonicalUrl = siteUrl
+  ? new URL(Astro.url.pathname, siteUrl).href
   : null;
 ---
 
@@ -58,7 +60,7 @@ const canonicalUrl = wedding.metadata.siteUrl
       document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#111111" : "#ffffff");
     </script>
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Pinyon+Script&display=swap" rel="stylesheet" />

@@ -1,0 +1,54 @@
+name: Deploy demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+env:
+  SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io', github.repository_owner) }}
+  BASE_PATH: ${{ vars.BASE_PATH || format('/{0}', github.event.repository.name) }}
+  PUBLIC_SITE_PASSWORD_HASH: ${{ vars.PUBLIC_SITE_PASSWORD_HASH }}
+  PUBLIC_SITE_PASSWORD_HINT: ${{ vars.PUBLIC_SITE_PASSWORD_HINT }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Validate the demo password configuration
+        shell: bash
+        run: |
+          if [[ ! "$PUBLIC_SITE_PASSWORD_HASH" =~ ^[a-f0-9]{64}$ ]]; then
+            echo "PUBLIC_SITE_PASSWORD_HASH must be a lowercase 64-character SHA-256 hash."
+            exit 1
+          fi
+
+      - name: Check, build and upload the site
+        uses: withastro/action@v6
+        with:
+          node-version: 22.19.0
+          package-manager: npm@10.9.3
+          build-cmd: npm run check && npm run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
