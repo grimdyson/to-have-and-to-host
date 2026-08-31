@@ -92,4 +92,6 @@ To Have and To Host is licensed under the [PolyForm Noncommercial License 1.0.0]
 
 This is a source-available licence, not an OSI-approved open-source licence. Anyone redistributing the project must include the licence terms and its required copyright notice.
 
+Release history is recorded in [`CHANGELOG.md`](CHANGELOG.md).
+
 Website design credit defaults to [timdyson.com](https://timdyson.com).
