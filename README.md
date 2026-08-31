@@ -2,9 +2,9 @@
 
 # To Have and To Host
 
-A polished, single-page wedding website template built with Astro and designed for private, mobile-first sharing.
+A polished, single-page wedding website template built with Astro and designed for private, mobile-first sharing. It is designed to cost nothing to run for a typical wedding: deploy it on a suitable free static-hosting tier, with an optional custom domain as the only expected expense.
 
-The template includes an editorial visual system, light and dark themes, sticky section chips, a password gate for casual privacy, configurable map links, and an RSVP flow that prepares an email without storing guest responses.
+The template includes an editorial visual system, light and dark themes, sticky section chips, a password gate for casual privacy, configurable map links, and an RSVP flow that prepares an email without storing guest responses or requiring a paid form service or database.
 
 ## Before adding personal information
 
